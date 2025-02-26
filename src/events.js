@@ -1,4 +1,4 @@
-const { initializeScreenReaderControls } = require('./screenReaderControl');
+const { initializeScreenReaderControls } = require('./control');
 const { speak } = require('./announcer');
 const blockDescriptions = require('./block_descriptions');
 

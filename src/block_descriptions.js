@@ -413,7 +413,190 @@ module.exports = {
             NUMBER: 'number'
         };
         return `Prompt for ${typeMessages[type]} with message ${textMessage}`;
-    }
+    },
+
+    lists_create_with: (block, variables) => {
+        const add0Input = block.getInputTargetBlock('ADD0');
+        const add1Input = block.getInputTargetBlock('ADD1');
+        const add2Input = block.getInputTargetBlock('ADD2');
+        const add0Message = add0Input ? getBlockMessage(add0Input, variables) : 'block 1';
+        const add1Message = add1Input ? getBlockMessage(add1Input, variables) : 'block 2';
+        const add2Message = add2Input ? getBlockMessage(add2Input, variables) : 'block 3';
+        return `Create list with ${add0Message}, ${add1Message}, ${add2Message}`;
+    },
+    lists_repeat: (block, variables) => {
+        const itemInput = block.getInputTargetBlock('ITEM');
+        const numInput = block.getInputTargetBlock('NUM');
+        const itemMessage = itemInput ? getBlockMessage(itemInput, variables) : 'item';
+        const numMessage = numInput ? getBlockMessage(numInput, variables) : 'n';
+        return `Create list with ${itemMessage}, repeated ${numMessage} times`;
+    },
+    lists_length: (block, variables) => {
+        const valueInput = block.getInputTargetBlock('VALUE');
+        const valueMessage = valueInput ? getBlockMessage(valueInput, variables) : 'list';
+        return `Length of ${valueMessage}`;
+    },
+    lists_isEmpty: (block, variables) => {
+        const valueInput = block.getInputTargetBlock('VALUE');
+        const valueMessage = valueInput ? getBlockMessage(valueInput, variables) : 'list';
+        return `Is ${valueMessage} empty`;
+    },
+    lists_indexOf: (block, variables) => {
+        const end = block.getFieldValue('END');
+        const valueInput = block.getInputTargetBlock('VALUE');
+        const findInput = block.getInputTargetBlock('FIND');
+        const valueMessage = valueInput ? getBlockMessage(valueInput, variables) : 'list';
+        const findMessage = findInput ? getBlockMessage(findInput, variables) : 'item';
+        const endMessage = end === 'FIRST' ? 'first' : 'last';
+        return `In ${valueMessage}, find ${endMessage} occurrence of ${findMessage}.`;
+    },
+    lists_getIndex: (block, variables) => {
+        const mode = block.getFieldValue('MODE');
+        const where = block.getFieldValue('WHERE');
+        const valueInput = block.getInputTargetBlock('VALUE');
+        const atInput = block.getInputTargetBlock('AT');
+        const valueMessage = valueInput ? getBlockMessage(valueInput, variables) : 'list';
+        const atMessage = atInput ? getBlockMessage(atInput, variables) : 'item';
+        const modeMessages = {
+            GET: 'get',
+            GET_REMOVE: 'get and remove',
+            REMOVE: 'remove'
+        };
+        const whereMessages = {
+            FROM_START: `letter ${atMessage}`,
+            FROM_END: `letter ${atMessage}, from the end`,
+            FIRST: 'first letter',
+            LAST: 'last letter',
+            RANDOM: 'random letter'
+        };
+        return `In ${valueMessage} ${modeMessages[mode]} ${whereMessages[where]}`;
+    },
+    lists_setIndex: (block, variables) => {
+        const mode = block.getFieldValue('MODE');
+        const where = block.getFieldValue('WHERE');
+        const listInput = block.getInputTargetBlock('LIST');
+        const atInput = block.getInputTargetBlock('AT');
+        const toInput = block.getInputTargetBlock('TO');
+        const listMessage = listInput ? getBlockMessage(listInput, variables) : 'list';
+        const atMessage = atInput ? getBlockMessage(atInput, variables) : 'number';
+        const toMessage = toInput ? getBlockMessage(toInput, variables) : 'item';
+        const modeMessages = {
+            SET: 'set',
+            INSERT: 'insert at'
+        };
+        const whereMessages = {
+            FROM_START: `letter ${atMessage}`,
+            FROM_END: `letter ${atMessage}, from the end`,
+            FIRST: 'first letter',
+            LAST: 'last letter',
+            RANDOM: 'random letter'
+        };
+        return `In ${listMessage}, ${modeMessages[mode]} ${whereMessages[where]} as ${toMessage} `;
+    },
+    lists_getSublist: (block, variables) => {
+        const where1 = block.getFieldValue('WHERE1');
+        const where2 = block.getFieldValue('WHERE2');
+        const listInput = block.getInputTargetBlock('LIST');
+        const at1Input = block.getInputTargetBlock('AT1');
+        const at2Input = block.getInputTargetBlock('AT2');
+        const listMessage = listInput ? getBlockMessage(listInput, variables) : 'list';
+        const at1Message = at1Input ? getBlockMessage(at1Input, variables) : 'start';
+        const at2Message = at2Input ? getBlockMessage(at2Input, variables) : 'end';
+        const where1Messages = {
+            FROM_START: `letter ${at1Message}`,
+            FROM_END: `letter ${at1Message} from the end`,
+            FIRST: 'first letter'
+        };
+        const where2Messages = {
+            FROM_START: `letter ${at2Message}`,
+            FROM_END: `letter ${at2Message} from the end`,
+            LAST: 'last letter'
+        };
+        return `In ${listMessage} get sublist from ${where1Messages[where1]} to ${where2Messages[where2]}`;
+    },
+    lists_split: (block, variables) => {
+        const mode = block.getFieldValue('MODE');
+        const input = block.getInputTargetBlock('INPUT');
+        const delimInput = block.getInput('DELIM') && block.getInput('DELIM').connection.targetBlock();
+        const inputMessage = input ? getBlockMessage(input, variables) : '';
+        const delimMessage = delimInput ? getDelimiterMessage(delimInput.getFieldValue('TEXT')) : 'delimiter';
+        const modeMessages = {
+            SPLIT: 'list from text',
+            JOIN: 'text from list'
+        };
+        return `Make ${modeMessages[mode]} ${inputMessage} with delimiter ${delimMessage}`;
+    },
+    lists_sort: (block, variables) => {
+        const type = block.getFieldValue('TYPE');
+        const direction = block.getFieldValue('DIRECTION');
+        const listInput = block.getInputTargetBlock('LIST');
+        const listMessage = listInput ? getBlockMessage(listInput, variables) : 'list';
+        const typeMessages = {
+            NUMERIC: 'numerically',
+            TEXT: 'alphabetically',
+            IGNORE_CASE: 'alphabetically, ignoring case'
+        };
+        const directionMessages = {
+            '1': 'ascending',
+            '-1': 'descending'
+        };
+        return `Sort ${listMessage} ${typeMessages[type]} in ${directionMessages[direction]} order`;
+    },
+    lists_reverse: (block, variables) => {
+        const listInput = block.getInputTargetBlock('LIST');
+        const listMessage = listInput ? getBlockMessage(listInput, variables) : 'list';
+        return `Reverse ${listMessage}`;
+    },
+
+    variables_get: (block, variables) => {
+        if (!variables) {
+            return 'variable';
+        }
+        const varField = block.getFieldValue('VAR');
+        const variable = variables.find(v => v.id === varField);
+        const variableName = variable ? variable.name : 'variable';
+        return `${variableName}`;
+    },
+    variables_set: (block, variables) => {
+        const varField = block.getFieldValue('VAR');
+        const variable = variables.find(v => v.id === varField);
+        const variableName = variable ? variable.name : 'variable';
+        const valueInput = block.getInputTargetBlock('VALUE');
+        const valueMessage = valueInput ? getBlockMessage(valueInput, variables) : 'value';
+        return `Set ${variableName} to ${valueMessage}`;
+    },
+    math_change: (block, variables) => {
+        const varField = block.getFieldValue('VAR');
+        const variable = variables.find(v => v.id === varField);
+        const variableName = variable ? variable.name : 'variable';
+        const deltaInput = block.getInputTargetBlock('DELTA');
+        const deltaMessage = deltaInput ? getBlockMessage(deltaInput, variables) : 'delta';
+        return `Change ${variableName} by ${deltaMessage}`;
+    },
+
+    procedures_defnoreturn: (block, variables) => {
+        const nameField = block.getFieldValue('NAME');
+        const stackInput = block.getInputTargetBlock('STACK');
+        const stackMessage = stackInput ? getBlockMessage(stackInput, variables) : 'nothing';
+        return `Function ${nameField} does ${stackMessage}`;
+    },
+
+    procedures_defreturn: (block, variables) => {
+        const nameField = block.getFieldValue('NAME');
+        const stackInput = block.getInputTargetBlock('STACK');
+        const returnInput = block.getInputTargetBlock('RETURN');
+        const stackMessage = stackInput ? getBlockMessage(stackInput, variables) : 'nothing';
+        const returnMessage = returnInput ? getBlockMessage(returnInput, variables) : 'nothing';
+        return `Function ${nameField} does ${stackMessage} and returns ${returnMessage}`;
+    },
+
+    procedures_ifreturn: (block, variables) => {
+        const conditionInput = block.getInputTargetBlock('CONDITION');
+        const valueInput = block.getInputTargetBlock('VALUE');
+        const conditionMessage = conditionInput ? getBlockMessage(conditionInput, variables) : 'condition';
+        const valueMessage = valueInput ? getBlockMessage(valueInput, variables) : 'value';
+        return `If ${conditionMessage} return ${valueMessage}`;
+    },
 
 };
 
@@ -424,4 +607,21 @@ function getBlockMessage(block, variables) {
         return descriptionTemplate(block, variables);
     }
     return `Block of type ${blockType}`;
+}
+
+function getDelimiterMessage(delim) {
+
+    const delimiters = {
+        ',': 'comma',
+        '.': 'point',
+        ' ': 'space',
+        ';': 'semicolon',
+        ':': 'colon',
+        '|': 'vertical bar',
+        '-': 'dash',
+        '_': 'underscore',
+        '\n': 'newline',
+        '\t': 'tab'
+    };
+    return delimiters[delim] || delim;
 }
